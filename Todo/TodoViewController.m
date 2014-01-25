@@ -7,14 +7,19 @@
 //
 
 #import "TodoViewController.h"
+#import "StaticCell.h"
 #import "EditableCell.h"
 
 
+static NSString * const staticCellIdentifier = @"StaticCell";
 static NSString * const editableCellIdentifier = @"EditableCell";
 
 @interface TodoViewController ()
 
+    @property (nonatomic, strong) EditableCell *specialAddingCell;
     @property (nonatomic, strong) NSMutableArray *todoDescriptions;
+
+    - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -26,6 +31,8 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 {
     self = [super initWithStyle:style];
     if (self) {
+        _specialAddingCell = NULL;
+        
         _todoDescriptions = [[NSMutableArray alloc] init];
         [_todoDescriptions addObject:@"kiss Tam"];
         [_todoDescriptions addObject:@"tell Tam how much you love her"];
@@ -45,7 +52,19 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
+    [[self tableView] registerClass:[StaticCell class] forCellReuseIdentifier:staticCellIdentifier];
     [[self tableView] registerClass:[EditableCell class] forCellReuseIdentifier:editableCellIdentifier];
+    
+    self.navigationItem.title = @"Adam's Todo List";
+    
+    // right + navigation button
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(rightNavButtonTouched:)];
+    [self.navigationItem setRightBarButtonItem:rightBarButton];
+    
+    
+    // handle touch events
+    UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.view addGestureRecognizer:singleFingerTap];
 }
 
 - (void)didReceiveMemoryWarning
@@ -63,19 +82,32 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_todoDescriptions count];
+    if (_specialAddingCell != NULL) {
+        return [_todoDescriptions count] + 1;
+    } else {
+        return [_todoDescriptions count];
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    EditableCell *cell = [tableView dequeueReusableCellWithIdentifier:editableCellIdentifier forIndexPath:indexPath];
-    
-    if (cell)
+    NSLog(@"special editing cell is / %@ /", _specialAddingCell);
+    if (_specialAddingCell != NULL && indexPath.row == 0)
     {
-        [cell updateContentWithString:_todoDescriptions[indexPath.row]];
+        NSLog(@"returning editing cell");
+        [_specialAddingCell cellWillShow];
+        return _specialAddingCell;
     }
-    
-    return cell;
+    else
+    {
+        NSLog(@"returning static cell");
+        StaticCell *staticCell = [tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
+        if (staticCell)
+        {
+            [staticCell updateContentWithString:_todoDescriptions[indexPath.row]];
+        }
+        return staticCell;
+    }
 }
 
 /*
@@ -87,7 +119,7 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 }
 */
 
-/*
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -99,7 +131,6 @@ static NSString * const editableCellIdentifier = @"EditableCell";
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
 
 /*
 // Override to support rearranging the table view.
@@ -128,5 +159,35 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 }
 
  */
+
+
+#pragma events
+
+- (IBAction)rightNavButtonTouched:(id)sender
+{
+    if (_specialAddingCell == NULL) {
+        _specialAddingCell = [[EditableCell alloc] init];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
+    }
+}
+
+
+
+- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
+    //CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    
+    NSLog(@"got single tap");
+    
+    if (_specialAddingCell != NULL) {
+        [_specialAddingCell setEditing:NO animated:YES];
+        [_specialAddingCell endEditing:YES];
+        _specialAddingCell = NULL;
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
+    }
+}
+
 
 @end

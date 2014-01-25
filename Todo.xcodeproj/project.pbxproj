@@ -21,6 +21,8 @@
 		61DFA8A1189383EC00EEE2AF /* TodoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8A0189383EC00EEE2AF /* TodoTests.m */; };
 		61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8AB1893845E00EEE2AF /* TodoViewController.m */; };
 		61DFA8B01893848F00EEE2AF /* EditableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8AF1893848F00EEE2AF /* EditableCell.m */; };
+		61DFA8B31893950A00EEE2AF /* Colors.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8B21893950A00EEE2AF /* Colors.m */; };
+		61DFA8B6189399E900EEE2AF /* StaticCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8B5189399E900EEE2AF /* StaticCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,10 @@
 		61DFA8AB1893845E00EEE2AF /* TodoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoViewController.m; sourceTree = "<group>"; };
 		61DFA8AE1893848F00EEE2AF /* EditableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableCell.h; sourceTree = "<group>"; };
 		61DFA8AF1893848F00EEE2AF /* EditableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableCell.m; sourceTree = "<group>"; };
+		61DFA8B11893950A00EEE2AF /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
+		61DFA8B21893950A00EEE2AF /* Colors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Colors.m; sourceTree = "<group>"; };
+		61DFA8B4189399E900EEE2AF /* StaticCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticCell.h; sourceTree = "<group>"; };
+		61DFA8B5189399E900EEE2AF /* StaticCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StaticCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +164,10 @@
 				61DFA8AB1893845E00EEE2AF /* TodoViewController.m */,
 				61DFA8AE1893848F00EEE2AF /* EditableCell.h */,
 				61DFA8AF1893848F00EEE2AF /* EditableCell.m */,
+				61DFA8B11893950A00EEE2AF /* Colors.h */,
+				61DFA8B21893950A00EEE2AF /* Colors.m */,
+				61DFA8B4189399E900EEE2AF /* StaticCell.h */,
+				61DFA8B5189399E900EEE2AF /* StaticCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -257,10 +267,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61DFA8B31893950A00EEE2AF /* Colors.m in Sources */,
 				61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */,
 				61DFA88C189383EC00EEE2AF /* AppDelegate.m in Sources */,
 				61DFA888189383EC00EEE2AF /* main.m in Sources */,
 				61DFA8B01893848F00EEE2AF /* EditableCell.m in Sources */,
+				61DFA8B6189399E900EEE2AF /* StaticCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

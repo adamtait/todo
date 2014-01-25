@@ -10,34 +10,39 @@
 
 @interface EditableCell ()
 
+@property (nonatomic, strong) UITextField *textField;
+
 @end
 
 @implementation EditableCell
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id)init
 {
-    NSLog(@"initWithStyle was called / %d /", style);
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self = [super init];
     if (self) {
-        // Initialization code
+        [[self.contentView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];;
+        self.textField = [[UITextField alloc] init];
+        [self.textField setFrame:CGRectMake(10, 8, 300, 30)];
+        [self.contentView addSubview:self.textField];
     }
     return self;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
+    NSLog(@"got setSelected / %hhd /", selected);
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
-#pragma handle view details
-
-- (void)updateContentWithString:(NSString *)content
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    _content = content;
-    self.textLabel.text = _content;
+    NSLog(@"got setEditing / %hhd /", editing);
+    [super setEditing:editing animated:animated];
 }
 
+- (void)cellWillShow
+{
+    [_textField becomeFirstResponder];
+}
 
 @end

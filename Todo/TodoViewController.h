@@ -10,4 +10,6 @@
 
 @interface TodoViewController : UITableViewController
 
+- (IBAction)rightNavButtonTouched:(id)sender;
+
 @end
