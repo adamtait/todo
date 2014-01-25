@@ -7,10 +7,18 @@
 //
 
 #import "TodoViewController.h"
+#import "EditableCell.h"
+
+
+static NSString * const editableCellIdentifier = @"EditableCell";
 
 @interface TodoViewController ()
 
+    @property (nonatomic, strong) NSMutableArray *todoDescriptions;
+
 @end
+
+
 
 @implementation TodoViewController
 
@@ -18,7 +26,11 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        _todoDescriptions = [[NSMutableArray alloc] init];
+        [_todoDescriptions addObject:@"kiss Tam"];
+        [_todoDescriptions addObject:@"tell Tam how much you love her"];
+        [_todoDescriptions addObject:@"always listen carefully to Tam"];
+        [_todoDescriptions addObject:@"understand the emotional context of what Tam says"];
     }
     return self;
 }
@@ -32,6 +44,8 @@
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    [[self tableView] registerClass:[EditableCell class] forCellReuseIdentifier:editableCellIdentifier];
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,24 +58,22 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
+    return [_todoDescriptions count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    EditableCell *cell = [tableView dequeueReusableCellWithIdentifier:editableCellIdentifier forIndexPath:indexPath];
     
-    // Configure the cell...
+    if (cell)
+    {
+        [cell updateContentWithString:_todoDescriptions[indexPath.row]];
+    }
     
     return cell;
 }

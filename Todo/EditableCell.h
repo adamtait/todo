@@ -10,4 +10,8 @@
 
 @interface EditableCell : UITableViewCell
 
+@property (nonatomic, strong) NSString *content;
+
+- (void)updateContentWithString:(NSString *)content;
+
 @end
