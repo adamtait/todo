@@ -65,6 +65,7 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     // handle touch events
     UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self.view addGestureRecognizer:singleFingerTap];
+    [self.navigationController.view addGestureRecognizer:singleFingerTap];
 }
 
 - (void)didReceiveMemoryWarning
