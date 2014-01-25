@@ -19,6 +19,8 @@
 		61DFA897189383EC00EEE2AF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87F189383EC00EEE2AF /* UIKit.framework */; };
 		61DFA89F189383EC00EEE2AF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 61DFA89D189383EC00EEE2AF /* InfoPlist.strings */; };
 		61DFA8A1189383EC00EEE2AF /* TodoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8A0189383EC00EEE2AF /* TodoTests.m */; };
+		61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8AB1893845E00EEE2AF /* TodoViewController.m */; };
+		61DFA8B01893848F00EEE2AF /* EditableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8AF1893848F00EEE2AF /* EditableCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,10 @@
 		61DFA89C189383EC00EEE2AF /* TodoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TodoTests-Info.plist"; sourceTree = "<group>"; };
 		61DFA89E189383EC00EEE2AF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		61DFA8A0189383EC00EEE2AF /* TodoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodoTests.m; sourceTree = "<group>"; };
+		61DFA8AA1893845E00EEE2AF /* TodoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoViewController.h; sourceTree = "<group>"; };
+		61DFA8AB1893845E00EEE2AF /* TodoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoViewController.m; sourceTree = "<group>"; };
+		61DFA8AE1893848F00EEE2AF /* EditableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableCell.h; sourceTree = "<group>"; };
+		61DFA8AF1893848F00EEE2AF /* EditableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +113,7 @@
 		61DFA881189383EC00EEE2AF /* Todo */ = {
 			isa = PBXGroup;
 			children = (
+				61DFA8AD1893846D00EEE2AF /* Views */,
 				61DFA88A189383EC00EEE2AF /* AppDelegate.h */,
 				61DFA88B189383EC00EEE2AF /* AppDelegate.m */,
 				61DFA88D189383EC00EEE2AF /* Images.xcassets */,
@@ -142,6 +149,17 @@
 				61DFA89D189383EC00EEE2AF /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		61DFA8AD1893846D00EEE2AF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				61DFA8AA1893845E00EEE2AF /* TodoViewController.h */,
+				61DFA8AB1893845E00EEE2AF /* TodoViewController.m */,
+				61DFA8AE1893848F00EEE2AF /* EditableCell.h */,
+				61DFA8AF1893848F00EEE2AF /* EditableCell.m */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,8 +257,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */,
 				61DFA88C189383EC00EEE2AF /* AppDelegate.m in Sources */,
 				61DFA888189383EC00EEE2AF /* main.m in Sources */,
+				61DFA8B01893848F00EEE2AF /* EditableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "TodoViewController.h"
 
 @implementation AppDelegate
 
@@ -16,6 +17,13 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    
+    TodoViewController *todoViewController = [[TodoViewController alloc] init];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:todoViewController];
+    
+    self.window.rootViewController = navController;
+    
     return YES;
 }
 
