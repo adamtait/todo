@@ -45,4 +45,9 @@
     [_textField becomeFirstResponder];
 }
 
+- (NSString *)getText
+{
+    return _textField.text;
+}
+
 @end

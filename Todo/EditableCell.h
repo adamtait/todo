@@ -14,4 +14,6 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 - (void)cellWillShow;
 
+- (NSString *)getText;
+
 @end

@@ -181,12 +181,22 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     NSLog(@"got single tap");
     
     if (_specialAddingCell != NULL) {
+        
+        // store the new description of the added todo item
+        NSString *newDescription = [_specialAddingCell getText];
+        
+        // stop editing and delete the _specialAddngCell
         [_specialAddingCell setEditing:NO animated:YES];
         [_specialAddingCell endEditing:YES];
         _specialAddingCell = NULL;
         
+        // tell the UITableViewController to remove the specialEditingCell
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        
+        // tell the UITableViewController to add the new cell
+        [_todoDescriptions insertObject:newDescription atIndex:indexPath.row];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
