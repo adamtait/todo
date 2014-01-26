@@ -12,4 +12,6 @@
 
 - (IBAction)rightNavButtonTouched:(id)sender;
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+
 @end

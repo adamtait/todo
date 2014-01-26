@@ -19,7 +19,8 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     @property (nonatomic, strong) EditableCell *specialAddingCell;
     @property (nonatomic, strong) NSMutableArray *todoDescriptions;
 
-    - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer;
+    @property (nonatomic, strong) UITapGestureRecognizer *singleFingerTap;
+    - (void)doneAdding:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -32,6 +33,7 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     self = [super initWithStyle:style];
     if (self) {
         _specialAddingCell = NULL;
+        _singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doneAdding:)];
         
         _todoDescriptions = [[NSMutableArray alloc] init];
         [_todoDescriptions addObject:@"kiss Tam"];
@@ -57,15 +59,12 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     
     self.navigationItem.title = @"Adam's Todo List";
     
-    // right + navigation button
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(rightNavButtonTouched:)];
+    // right '+' navigation button
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(rightNavButtonTouched:)];
     [self.navigationItem setRightBarButtonItem:rightBarButton];
     
-    
-    // handle touch events
-    UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
-    [self.view addGestureRecognizer:singleFingerTap];
-    [self.navigationController.view addGestureRecognizer:singleFingerTap];
+    // left 'edit' navigation button
+    [self.navigationItem setLeftBarButtonItem:self.editButtonItem];
 }
 
 - (void)didReceiveMemoryWarning
@@ -97,6 +96,11 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     {
         NSLog(@"returning editing cell");
         [_specialAddingCell cellWillShow];
+        
+        // handle touch events
+        [self.view addGestureRecognizer:_singleFingerTap];
+        [self.navigationController.view addGestureRecognizer:_singleFingerTap];
+        
         return _specialAddingCell;
     }
     else
@@ -111,14 +115,12 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     }
 }
 
-/*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
-*/
 
 
 // Override to support editing the table view.
@@ -126,6 +128,7 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [_todoDescriptions removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -133,21 +136,24 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     }   
 }
 
-/*
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
+    // change order of item in NSMutableArray self.todoDescriptions
+    NSString *item = [_todoDescriptions objectAtIndex:fromIndexPath.row];
+    [_todoDescriptions removeObjectAtIndex:fromIndexPath.row];
+    [_todoDescriptions insertObject:item atIndex:toIndexPath.row];
+    
+    NSLog(@"moved todo from / %d / to / %d /", fromIndexPath.row, toIndexPath.row);
+    
 }
-*/
 
-/*
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
 
 /*
 #pragma mark - Navigation
@@ -170,17 +176,27 @@ static NSString * const editableCellIdentifier = @"EditableCell";
         _specialAddingCell = [[EditableCell alloc] init];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
+    } else {
+        [self doneAdding:NULL];
     }
 }
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    NSLog(@"TableViewController got a setEditing / %hhd / with animation / %hhd /", editing, animated);
+    [super setEditing:editing animated:animated];
+}
 
 
-- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
+- (void)doneAdding:(UITapGestureRecognizer *)recognizer {
     //CGPoint location = [recognizer locationInView:[recognizer.view superview]];
     
     NSLog(@"got single tap");
     
     if (_specialAddingCell != NULL) {
+        
+        [self.view removeGestureRecognizer:_singleFingerTap];
+        [self.navigationController.view removeGestureRecognizer:_singleFingerTap];
         
         // store the new description of the added todo item
         NSString *newDescription = [_specialAddingCell getText];
