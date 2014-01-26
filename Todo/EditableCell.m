@@ -36,7 +36,7 @@
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    NSLog(@"got setEditing / %hhd /", editing);
+    NSLog(@"EditableCell got setEditing / %hhd /", editing);
     [super setEditing:editing animated:animated];
 }
 

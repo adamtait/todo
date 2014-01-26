@@ -19,6 +19,8 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     @property (nonatomic, strong) EditableCell *specialAddingCell;
     @property (nonatomic, strong) NSMutableArray *todoDescriptions;
 
+    - (StaticCell *)createOrLoadStaticCellFromIndexPath:(NSIndexPath *)indexPath;
+
     @property (nonatomic, strong) UITapGestureRecognizer *singleFingerTap;
     - (void)doneAdding:(UITapGestureRecognizer *)recognizer;
 
@@ -53,6 +55,8 @@ static NSString * const editableCellIdentifier = @"EditableCell";
  
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    [self.tableView setDelegate:self];
     
     [[self tableView] registerClass:[StaticCell class] forCellReuseIdentifier:staticCellIdentifier];
     [[self tableView] registerClass:[EditableCell class] forCellReuseIdentifier:editableCellIdentifier];
@@ -89,7 +93,18 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     }
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (StaticCell *)createOrLoadStaticCellFromIndexPath:(NSIndexPath *)indexPath
+{
+    StaticCell *staticCell = [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
+    if (staticCell)
+    {
+        [staticCell updateContentWithString:_todoDescriptions[indexPath.row]];
+    }
+    return staticCell;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView
+cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"special editing cell is / %@ /", _specialAddingCell);
     if (_specialAddingCell != NULL && indexPath.row == 0)
@@ -106,25 +121,20 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     else
     {
         NSLog(@"returning static cell");
-        StaticCell *staticCell = [tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
-        if (staticCell)
-        {
-            [staticCell updateContentWithString:_todoDescriptions[indexPath.row]];
-        }
-        return staticCell;
+        return [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
     }
 }
 
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView
+canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
 
 
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView
+commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
@@ -136,8 +146,8 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     }   
 }
 
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+- (void)tableView:(UITableView *)tableView
+moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
     // change order of item in NSMutableArray self.todoDescriptions
     NSString *item = [_todoDescriptions objectAtIndex:fromIndexPath.row];
@@ -148,12 +158,57 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     
 }
 
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+
+
+#pragma UITableViewDelegate
+
+
+- (void)tableView:(UITableView *)tableView
+willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell class] == [StaticCell class])
+    {
+        [(StaticCell *)cell updateContentWithString:_todoDescriptions[indexPath.row]];
+    }
+}
+
+
+- (BOOL)tableView:(UITableView *)tableView
+canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
+
+- (CGFloat)tableView:(UITableView *)tableView
+estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"checking estimated height");
+    return 50.0;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGSize theSize = [_todoDescriptions[indexPath.row] sizeWithFont:[StaticCell defaultFont]
+                                                  constrainedToSize:CGSizeMake(300.0f, 9999.0f)
+                                                      lineBreakMode:[StaticCell defaultLineBreakMode]];
+    return theSize.height + 33; // 33 just seems to be the magic height for centering the text in the UITableViewCell
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"cell / %d / did get deselected", indexPath.row);
+    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"cell / %d / did finish editing", indexPath.row);
+    StaticCell *cell = [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
+    [cell resignFirstResponder];
+    [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+}
+
 
 /*
 #pragma mark - Navigation

@@ -8,10 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@interface StaticCell : UITableViewCell
+@interface StaticCell : UITableViewCell <UITextViewDelegate>
 
 @property (nonatomic, strong) NSString *content;
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+- (BOOL)resignFirstResponder;
+
 - (void)updateContentWithString:(NSString *)content;
+- (CGFloat)getHeight;
+
++ (UIFont *)defaultFont;
++ (NSLineBreakMode)defaultLineBreakMode;
 
 @end

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TodoViewController : UITableViewController
+@interface TodoViewController : UITableViewController <UITableViewDelegate>
 
 - (IBAction)rightNavButtonTouched:(id)sender;
 
