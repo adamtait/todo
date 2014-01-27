@@ -17,11 +17,19 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 
 @interface TodoViewController ()
 
+    // private properties
     @property (nonatomic, strong) TodoList *todoList;
     @property (nonatomic, strong) EditableCell *specialAddingCell;
 
+    // events
+    - (IBAction)rightNavButtonTouched:(id)sender;
+
     @property (nonatomic, strong) UITapGestureRecognizer *singleFingerTap;
-    - (void)doneAdding:(UITapGestureRecognizer *)recognizer;
+    - (void)gotTapGesture:(UITapGestureRecognizer *)recognizer;
+
+    // editing
+    - (void)startEditing;
+    - (void)stopEditing;
 
 @end
 
@@ -34,7 +42,7 @@ static NSString * const editableCellIdentifier = @"EditableCell";
     self = [super initWithStyle:style];
     if (self) {
         _specialAddingCell = NULL;
-        _singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doneAdding:)];
+        _singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(gotTapGesture:)];
         
         _todoList = [[TodoList alloc] init];
     }
@@ -223,17 +231,21 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
  */
 
 
+#pragma UIResponder methods
+
+- (void)gotTapGesture:(UITapGestureRecognizer *)recognizer {
+    //CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    
+    NSLog(@"got single tap");
+    [self stopEditing];
+}
+
+
 #pragma events
 
 - (IBAction)rightNavButtonTouched:(id)sender
 {
-    if (_specialAddingCell == NULL) {
-        _specialAddingCell = [[EditableCell alloc] init];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
-    } else {
-        [self doneAdding:NULL];
-    }
+    [self startEditing];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -242,14 +254,34 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
     [super setEditing:editing animated:animated];
 }
 
+- (void)gotTextViewDidEndEditingEvent:(id)sender
+{
+    NSLog(@"TodoViewController gotTextViewDidEndEditingEvent");
+    [self stopEditing];
+}
 
-- (void)doneAdding:(UITapGestureRecognizer *)recognizer {
-    //CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-    
-    NSLog(@"got single tap");
-    
+
+#pragma editing
+
+- (void)startEditing
+{
+    if (_specialAddingCell == NULL) {
+        _specialAddingCell = [[EditableCell alloc] init];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        
+        // add observer for textViewDidEndEditing event
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidEndEditingEvent:) name:@"textViewDidEndEditing" object:nil];
+    } else {
+        [self stopEditing];
+    }
+}
+
+- (void)stopEditing
+{
     if (_specialAddingCell != NULL) {
         
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
         [self.view removeGestureRecognizer:_singleFingerTap];
         [self.navigationController.view removeGestureRecognizer:_singleFingerTap];
         

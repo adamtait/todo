@@ -69,7 +69,6 @@
     self.textView.text = content;
     
     NSRange range = NSMakeRange(0, [content length]);
-    NSLog(@"CellTextView is going to make a range starting at / %d / with length / %d /", range.location, range.length);
     [_storage addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:18.0] range:range];
 }
 
@@ -86,12 +85,17 @@
 {
     NSLog(@"CellTextView did end editing");
     [self.textView resignFirstResponder];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidEndEditing" object:self];
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    
+- (BOOL)textView:(UITextView *)textView
+shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
     if([text isEqualToString:@"\n"]) {
+        NSLog(@"CellTextView shouldChangeTextInRange is done editing");
         [textView resignFirstResponder];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidEndEditing" object:self];
         return NO;
     }
     

@@ -10,8 +10,8 @@
 
 @interface TodoViewController : UITableViewController <UITableViewDelegate>
 
-- (IBAction)rightNavButtonTouched:(id)sender;
+    - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+    - (void)gotTextViewDidEndEditingEvent:(id)sender;
 
 @end

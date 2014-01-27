@@ -7,11 +7,11 @@
 //
 
 #import "EditableCell.h"
+#import "CellTextView.h"
 
 @interface EditableCell ()
 
-@property (nonatomic, strong) UITextField *textField;
-@property (nonatomic, strong) UITextView *textView;
+    @property (nonatomic, strong) CellTextView *cellTextView;
 
 @end
 
@@ -21,10 +21,11 @@
 {
     self = [super init];
     if (self) {
-        [[self.contentView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];;
-        self.textField = [[UITextField alloc] init];
-        [self.textField setFrame:CGRectMake(14, 8, 288, 30)];
-        [self.contentView addSubview:self.textField];
+        // remove all subviews from the UITableViewCell contentView
+        [[self.contentView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        
+        self.cellTextView = [[CellTextView alloc] initWithFrame:CGRectMake(14, 8, 288, 30)];
+        [self.contentView addSubview:self.cellTextView.getTextView];
     }
     return self;
 }
@@ -43,12 +44,13 @@
 
 - (void)cellWillShow
 {
-    [_textField becomeFirstResponder];
+    NSLog(@"EditableCell will show");
+    [self.cellTextView becomeFirstResponder];
 }
 
 - (NSString *)getText
 {
-    return _textField.text;
+    return [self.cellTextView getTextView].text;
 }
 
 @end
