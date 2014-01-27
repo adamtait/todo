@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		613B4CBB1895CB1A0060E09E /* TodoList.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4CBA1895CB1A0060E09E /* TodoList.m */; };
 		613B4CBE1895D9D00060E09E /* CellTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4CBD1895D9D00060E09E /* CellTextView.m */; };
+		613B4CC1189652450060E09E /* TodoListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4CC0189652450060E09E /* TodoListCell.m */; };
 		61DFA87C189383EC00EEE2AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87B189383EC00EEE2AF /* Foundation.framework */; };
 		61DFA87E189383EC00EEE2AF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87D189383EC00EEE2AF /* CoreGraphics.framework */; };
 		61DFA880189383EC00EEE2AF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87F189383EC00EEE2AF /* UIKit.framework */; };
@@ -22,9 +23,7 @@
 		61DFA89F189383EC00EEE2AF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 61DFA89D189383EC00EEE2AF /* InfoPlist.strings */; };
 		61DFA8A1189383EC00EEE2AF /* TodoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8A0189383EC00EEE2AF /* TodoTests.m */; };
 		61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8AB1893845E00EEE2AF /* TodoViewController.m */; };
-		61DFA8B01893848F00EEE2AF /* EditableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8AF1893848F00EEE2AF /* EditableCell.m */; };
 		61DFA8B31893950A00EEE2AF /* Colors.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8B21893950A00EEE2AF /* Colors.m */; };
-		61DFA8B6189399E900EEE2AF /* StaticCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 61DFA8B5189399E900EEE2AF /* StaticCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +41,8 @@
 		613B4CBA1895CB1A0060E09E /* TodoList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoList.m; sourceTree = "<group>"; };
 		613B4CBC1895D9D00060E09E /* CellTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellTextView.h; sourceTree = "<group>"; };
 		613B4CBD1895D9D00060E09E /* CellTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellTextView.m; sourceTree = "<group>"; };
+		613B4CBF189652450060E09E /* TodoListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoListCell.h; sourceTree = "<group>"; };
+		613B4CC0189652450060E09E /* TodoListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoListCell.m; sourceTree = "<group>"; };
 		61DFA878189383EC00EEE2AF /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61DFA87B189383EC00EEE2AF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		61DFA87D189383EC00EEE2AF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -60,12 +61,8 @@
 		61DFA8A0189383EC00EEE2AF /* TodoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodoTests.m; sourceTree = "<group>"; };
 		61DFA8AA1893845E00EEE2AF /* TodoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoViewController.h; sourceTree = "<group>"; };
 		61DFA8AB1893845E00EEE2AF /* TodoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoViewController.m; sourceTree = "<group>"; };
-		61DFA8AE1893848F00EEE2AF /* EditableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableCell.h; sourceTree = "<group>"; };
-		61DFA8AF1893848F00EEE2AF /* EditableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableCell.m; sourceTree = "<group>"; };
 		61DFA8B11893950A00EEE2AF /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
 		61DFA8B21893950A00EEE2AF /* Colors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Colors.m; sourceTree = "<group>"; };
-		61DFA8B4189399E900EEE2AF /* StaticCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticCell.h; sourceTree = "<group>"; };
-		61DFA8B5189399E900EEE2AF /* StaticCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StaticCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,14 +175,12 @@
 			children = (
 				61DFA8AA1893845E00EEE2AF /* TodoViewController.h */,
 				61DFA8AB1893845E00EEE2AF /* TodoViewController.m */,
-				61DFA8AE1893848F00EEE2AF /* EditableCell.h */,
-				61DFA8AF1893848F00EEE2AF /* EditableCell.m */,
 				61DFA8B11893950A00EEE2AF /* Colors.h */,
 				61DFA8B21893950A00EEE2AF /* Colors.m */,
-				61DFA8B4189399E900EEE2AF /* StaticCell.h */,
-				61DFA8B5189399E900EEE2AF /* StaticCell.m */,
 				613B4CBC1895D9D00060E09E /* CellTextView.h */,
 				613B4CBD1895D9D00060E09E /* CellTextView.m */,
+				613B4CBF189652450060E09E /* TodoListCell.h */,
+				613B4CC0189652450060E09E /* TodoListCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -290,9 +285,8 @@
 				61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */,
 				61DFA88C189383EC00EEE2AF /* AppDelegate.m in Sources */,
 				61DFA888189383EC00EEE2AF /* main.m in Sources */,
+				613B4CC1189652450060E09E /* TodoListCell.m in Sources */,
 				613B4CBB1895CB1A0060E09E /* TodoList.m in Sources */,
-				61DFA8B01893848F00EEE2AF /* EditableCell.m in Sources */,
-				61DFA8B6189399E900EEE2AF /* StaticCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
