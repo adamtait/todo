@@ -7,6 +7,7 @@
 //
 
 #import "TodoViewController.h"
+#import "TodoList.h"
 #import "StaticCell.h"
 #import "EditableCell.h"
 
@@ -16,10 +17,8 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 
 @interface TodoViewController ()
 
+    @property (nonatomic, strong) TodoList *todoList;
     @property (nonatomic, strong) EditableCell *specialAddingCell;
-    @property (nonatomic, strong) NSMutableArray *todoDescriptions;
-
-    - (StaticCell *)createOrLoadStaticCellFromIndexPath:(NSIndexPath *)indexPath;
 
     @property (nonatomic, strong) UITapGestureRecognizer *singleFingerTap;
     - (void)doneAdding:(UITapGestureRecognizer *)recognizer;
@@ -37,11 +36,7 @@ static NSString * const editableCellIdentifier = @"EditableCell";
         _specialAddingCell = NULL;
         _singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doneAdding:)];
         
-        _todoDescriptions = [[NSMutableArray alloc] init];
-        [_todoDescriptions addObject:@"kiss Tam"];
-        [_todoDescriptions addObject:@"tell Tam how much you love her"];
-        [_todoDescriptions addObject:@"always listen carefully to Tam"];
-        [_todoDescriptions addObject:@"understand the emotional context of what Tam says"];
+        _todoList = [[TodoList alloc] init];
     }
     return self;
 }
@@ -87,20 +82,10 @@ static NSString * const editableCellIdentifier = @"EditableCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (_specialAddingCell != NULL) {
-        return [_todoDescriptions count] + 1;
+        return [_todoList count] + 1;
     } else {
-        return [_todoDescriptions count];
+        return [_todoList count];
     }
-}
-
-- (StaticCell *)createOrLoadStaticCellFromIndexPath:(NSIndexPath *)indexPath
-{
-    StaticCell *staticCell = [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
-    if (staticCell)
-    {
-        [staticCell updateContentWithString:_todoDescriptions[indexPath.row]];
-    }
-    return staticCell;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -120,8 +105,9 @@ cellForRowAtIndexPath:(NSIndexPath *)indexPath
     }
     else
     {
-        NSLog(@"returning static cell");
-        return [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
+        NSLog(@"returning static cell for index / %d /", indexPath.row);
+        StaticCell *staticCell = [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
+        return staticCell;
     }
 }
 
@@ -138,7 +124,7 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [_todoDescriptions removeObjectAtIndex:indexPath.row];
+        [_todoList deleteFromIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }   
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -149,12 +135,8 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(
 - (void)tableView:(UITableView *)tableView
 moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-    // change order of item in NSMutableArray self.todoDescriptions
-    NSString *item = [_todoDescriptions objectAtIndex:fromIndexPath.row];
-    [_todoDescriptions removeObjectAtIndex:fromIndexPath.row];
-    [_todoDescriptions insertObject:item atIndex:toIndexPath.row];
+    [_todoList moveStringFromIndex:fromIndexPath.row toIndex:toIndexPath.row];
     
-    NSLog(@"moved todo from / %d / to / %d /", fromIndexPath.row, toIndexPath.row);
     
 }
 
@@ -168,7 +150,10 @@ willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPa
 {
     if ([cell class] == [StaticCell class])
     {
-        [(StaticCell *)cell updateContentWithString:_todoDescriptions[indexPath.row]];
+        StaticCell *staticCell = (StaticCell *)cell;
+        NSString *content = [_todoList getStringForIndex:indexPath.row];
+        NSLog(@"UITableViewController will show cell with content / %@ /", content);
+        [staticCell.cellTextView updateContentWithString:content];
     }
 }
 
@@ -187,21 +172,36 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
     return 50.0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView
+heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGSize theSize = [_todoDescriptions[indexPath.row] sizeWithFont:[StaticCell defaultFont]
+    
+    CGSize calculatedSize;
+    if (_specialAddingCell != NULL && indexPath.row == 0) {
+        calculatedSize = [@"example string" sizeWithFont:[CellTextView defaultFont]
+                                                constrainedToSize:CGSizeMake(300.0f, 9999.0f)
+                                                lineBreakMode:[CellTextView defaultLineBreakMode]];
+    } else {
+        NSInteger index = indexPath.row;
+        if (_specialAddingCell != NULL){
+            index = index - 1;
+        }
+        calculatedSize = [[_todoList getStringForIndex:index] sizeWithFont:[CellTextView defaultFont]
                                                   constrainedToSize:CGSizeMake(300.0f, 9999.0f)
-                                                      lineBreakMode:[StaticCell defaultLineBreakMode]];
-    return theSize.height + 33; // 33 just seems to be the magic height for centering the text in the UITableViewCell
+                                                      lineBreakMode:[CellTextView defaultLineBreakMode]];
+    }
+    return calculatedSize.height + 33; // 33 just seems to be the magic height for centering the text in the UITableViewCell
 }
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView
+didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"cell / %d / did get deselected", indexPath.row);
     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
-- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView
+didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"cell / %d / did finish editing", indexPath.row);
     StaticCell *cell = [self.tableView dequeueReusableCellWithIdentifier:staticCellIdentifier forIndexPath:indexPath];
@@ -266,7 +266,7 @@ estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
         
         // tell the UITableViewController to add the new cell
-        [_todoDescriptions insertObject:newDescription atIndex:indexPath.row];
+        [_todoList addString:newDescription];
         [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }
 }

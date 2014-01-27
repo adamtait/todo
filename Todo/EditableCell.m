@@ -11,6 +11,7 @@
 @interface EditableCell ()
 
 @property (nonatomic, strong) UITextField *textField;
+@property (nonatomic, strong) UITextView *textView;
 
 @end
 
@@ -22,7 +23,7 @@
     if (self) {
         [[self.contentView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];;
         self.textField = [[UITextField alloc] init];
-        [self.textField setFrame:CGRectMake(14, 8, 300, 30)];
+        [self.textField setFrame:CGRectMake(14, 8, 288, 30)];
         [self.contentView addSubview:self.textField];
     }
     return self;

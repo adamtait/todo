@@ -7,18 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CellTextView.h"
 
-@interface StaticCell : UITableViewCell <UITextViewDelegate>
+@interface StaticCell : UITableViewCell 
 
-@property (nonatomic, strong) NSString *content;
+    @property (nonatomic, strong) CellTextView *cellTextView;
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
-- (BOOL)resignFirstResponder;
-
-- (void)updateContentWithString:(NSString *)content;
-- (CGFloat)getHeight;
-
-+ (UIFont *)defaultFont;
-+ (NSLineBreakMode)defaultLineBreakMode;
+    - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
+    - (BOOL)resignFirstResponder;
 
 @end
