@@ -1,5 +1,5 @@
 //
-//  TodoListCell.h
+//  TodoCell.h
 //  Todo
 //
 //  Created by Adam Tait on 1/27/14.
@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TodoListCell : UITableViewCell
+@interface TodoCell : UITableViewCell
+
+    // public properties
+    @property (nonatomic, strong) NSIndexPath *indexPath;
 
     // public instance methods
-    - (id)init;
     - (NSString *)getText;
     - (void)updateContentWithString:(NSString *)content;
 

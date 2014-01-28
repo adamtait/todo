@@ -10,6 +10,8 @@
 		613B4CBB1895CB1A0060E09E /* TodoList.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4CBA1895CB1A0060E09E /* TodoList.m */; };
 		613B4CBE1895D9D00060E09E /* CellTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4CBD1895D9D00060E09E /* CellTextView.m */; };
 		613B4CC1189652450060E09E /* TodoListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4CC0189652450060E09E /* TodoListCell.m */; };
+		613B4D08189782740060E09E /* TodoListCells.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4D07189782740060E09E /* TodoListCells.m */; };
+		613B4D0B189783440060E09E /* TodoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 613B4D0A189783440060E09E /* TodoCell.m */; };
 		61DFA87C189383EC00EEE2AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87B189383EC00EEE2AF /* Foundation.framework */; };
 		61DFA87E189383EC00EEE2AF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87D189383EC00EEE2AF /* CoreGraphics.framework */; };
 		61DFA880189383EC00EEE2AF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61DFA87F189383EC00EEE2AF /* UIKit.framework */; };
@@ -43,6 +45,10 @@
 		613B4CBD1895D9D00060E09E /* CellTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellTextView.m; sourceTree = "<group>"; };
 		613B4CBF189652450060E09E /* TodoListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoListCell.h; sourceTree = "<group>"; };
 		613B4CC0189652450060E09E /* TodoListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoListCell.m; sourceTree = "<group>"; };
+		613B4D06189782740060E09E /* TodoListCells.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoListCells.h; sourceTree = "<group>"; };
+		613B4D07189782740060E09E /* TodoListCells.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoListCells.m; sourceTree = "<group>"; };
+		613B4D09189783440060E09E /* TodoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoCell.h; sourceTree = "<group>"; };
+		613B4D0A189783440060E09E /* TodoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoCell.m; sourceTree = "<group>"; };
 		61DFA878189383EC00EEE2AF /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61DFA87B189383EC00EEE2AF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		61DFA87D189383EC00EEE2AF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -173,6 +179,8 @@
 		61DFA8AD1893846D00EEE2AF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				613B4D09189783440060E09E /* TodoCell.h */,
+				613B4D0A189783440060E09E /* TodoCell.m */,
 				61DFA8AA1893845E00EEE2AF /* TodoViewController.h */,
 				61DFA8AB1893845E00EEE2AF /* TodoViewController.m */,
 				61DFA8B11893950A00EEE2AF /* Colors.h */,
@@ -181,6 +189,8 @@
 				613B4CBD1895D9D00060E09E /* CellTextView.m */,
 				613B4CBF189652450060E09E /* TodoListCell.h */,
 				613B4CC0189652450060E09E /* TodoListCell.m */,
+				613B4D06189782740060E09E /* TodoListCells.h */,
+				613B4D07189782740060E09E /* TodoListCells.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -283,10 +293,12 @@
 				61DFA8B31893950A00EEE2AF /* Colors.m in Sources */,
 				613B4CBE1895D9D00060E09E /* CellTextView.m in Sources */,
 				61DFA8AC1893845E00EEE2AF /* TodoViewController.m in Sources */,
+				613B4D0B189783440060E09E /* TodoCell.m in Sources */,
 				61DFA88C189383EC00EEE2AF /* AppDelegate.m in Sources */,
 				61DFA888189383EC00EEE2AF /* main.m in Sources */,
 				613B4CC1189652450060E09E /* TodoListCell.m in Sources */,
 				613B4CBB1895CB1A0060E09E /* TodoList.m in Sources */,
+				613B4D08189782740060E09E /* TodoListCells.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,7 +416,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Todo/Todo-Prefix.pch";
 				INFOPLIST_FILE = "Todo/Todo-Info.plist";
@@ -417,7 +428,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Todo/Todo-Prefix.pch";
 				INFOPLIST_FILE = "Todo/Todo-Info.plist";

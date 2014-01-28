@@ -1,15 +1,15 @@
 //
-//  TodoListCell.m
+//  TodoCell.m
 //  Todo
 //
 //  Created by Adam Tait on 1/27/14.
 //  Copyright (c) 2014 Adam Tait. All rights reserved.
 //
 
-#import "TodoListCell.h"
+#import "TodoCell.h"
 #import "CellTextView.h"
 
-@interface TodoListCell ()
+@interface TodoCell ()
 
     // private properties
     @property (nonatomic, strong) CellTextView *cellTextView;
@@ -21,7 +21,7 @@
 @end
 
 
-@implementation TodoListCell
+@implementation TodoCell
 
 #pragma public initialization methods
 
@@ -64,7 +64,7 @@
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    NSLog(@"TodoListCell got setEditing / %hhd /", editing);
+    NSLog(@"TodoCell got setEditing / %hhd /", editing);
     [super setEditing:editing animated:animated];
 }
 
@@ -86,14 +86,14 @@
 
 - (BOOL)becomeFirstResponder
 {
-    NSLog(@"TodoListCell is going to becomeFirstResponder");
+    NSLog(@"TodoCell is going to becomeFirstResponder");
     [self.cellTextView becomeFirstResponder];
     return [super becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    NSLog(@"TodoListCell is going to resignFirstResponder");
+    NSLog(@"TodoCell is going to resignFirstResponder");
     [self.cellTextView resignFirstResponder];
     return [super resignFirstResponder];
 }

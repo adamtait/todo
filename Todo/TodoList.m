@@ -27,6 +27,10 @@
         [_todoItems addObject:@"tell Tam how much you love her"];
         [_todoItems addObject:@"always listen carefully to Tam"];
         [_todoItems addObject:@"understand the emotional context of what Tam says"];
+        [_todoItems addObject:@"add constraints"];
+        [_todoItems addObject:@"save to parse"];
+        [_todoItems addObject:@"add an app icon"];
+        [_todoItems addObject:@"make text areas that are being edited update their heights"];
     }
     return self;
 }
