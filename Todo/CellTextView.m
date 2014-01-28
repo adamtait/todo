@@ -50,6 +50,7 @@
         [self.storage addLayoutManager:self.layout];
         
         self.textView = [[UITextView alloc] initWithFrame:frame textContainer:self.container];
+        self.textView.font = [CellTextView defaultFont];
         self.textView.delegate = self;
         self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         self.textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -109,6 +110,12 @@ shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     NSLog(@"CellTextView becameFirstResponder");
     return [self.textView becomeFirstResponder];
+}
+
+- (BOOL)resignFirstResponder
+{
+    NSLog(@"CellTextView resignFirstResponder");
+    return [self.textView resignFirstResponder];
 }
 
 @end
