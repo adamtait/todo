@@ -284,10 +284,16 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
         // store the new description of the added todo item
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         TodoListCell *cell = (TodoListCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+        
+        // end the cell's editing and ownership over the keyboard
+        [cell resignFirstResponder];
+        
         NSString *newDescription = [cell getText];
+
+        // empty the content in the cell's textView so that when the cell is dequeued again, it's empty
+        [cell updateContentWithString:@""];
         
         // tell the UITableViewController to remove the editing cell
-        
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
         
         // tell the UITableViewController to add the new cell

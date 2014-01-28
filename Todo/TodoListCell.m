@@ -91,4 +91,11 @@
     return [super becomeFirstResponder];
 }
 
+- (BOOL)resignFirstResponder
+{
+    NSLog(@"TodoListCell is going to resignFirstResponder");
+    [self.cellTextView resignFirstResponder];
+    return [super resignFirstResponder];
+}
+
 @end

@@ -19,5 +19,6 @@
     - (void)updateContentWithString:(NSString *)content;
 
     - (BOOL)becomeFirstResponder;
+    - (BOOL)resignFirstResponder;
 
 @end
