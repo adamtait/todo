@@ -19,6 +19,7 @@
     - (void)textViewDidBeginEditing:(UITextView *)textView;
     - (void)textViewDidEndEditing:(UITextView *)textView;
     - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+    - (void)textViewDidChange:(UITextView *)textView;
 
 @end
 
@@ -94,13 +95,18 @@
 shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if([text isEqualToString:@"\n"]) {
-        NSLog(@"CellTextView shouldChangeTextInRange is done editing");
+        NSLog(@"CellTextView shouldChangeTextInRange has finished");
         [textView resignFirstResponder];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidEndEditing" object:self];
         return NO;
     }
     
     return YES;
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidChange" object:self];
 }
 
 

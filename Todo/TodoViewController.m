@@ -7,13 +7,12 @@
 //
 
 #import "TodoViewController.h"
-#import "TodoListCell.h"
+#import "TodoCell.h"
 #import "CellTextView.h"
 #import "TodoList.h"
 
 
-
-static NSString * const cellIdentifier = @"TodoListCell";
+static NSString * const cellIdentifier = @"TodoCell";
 
 @interface TodoViewController ()
 
@@ -58,18 +57,18 @@ static NSString * const cellIdentifier = @"TodoListCell";
     // setup the UITableView delegate to be this UITableViewController
     [self.tableView setDelegate:self];
     
-    // register the TodoListCell class for the reuseIdentifier
-    [[self tableView] registerClass:[TodoListCell class] forCellReuseIdentifier:cellIdentifier];
+    // register the TodoCell class for the reuseIdentifier
+    [[self tableView] registerClass:[TodoCell class] forCellReuseIdentifier:cellIdentifier];
     
-    // add a title to the navigation bar
+    // setup navigation bar
     self.navigationItem.title = @"Adam's Todo List";
-    
-    // right '+' navigation button
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(rightNavButtonTouched:)];
     [self.navigationItem setRightBarButtonItem:rightBarButton];
-    
-    // left 'edit' navigation button
     [self.navigationItem setLeftBarButtonItem:self.editButtonItem];
+    
+    // start listening for textViewDidChange events
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTodoCellDidChangeEvent:) name:@"todoCellDidChange" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidEndEditingEvent:) name:@"textViewDidEndEditing" object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,27 +77,25 @@ static NSString * const cellIdentifier = @"TodoListCell";
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
+#pragma mark - table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (_editingMode) {
-        return [_todoList count] + 1;
-    } else {
-        return [_todoList count];
-    }
+    return [_todoList count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
 cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"UITableViewController: returning cell for index / %d /", indexPath.row);
-    return [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    
+    TodoCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    
+    if (!cell.todoListItem) {
+        cell.todoListItem = [_todoList getTodoListItemForIndex:indexPath.row];
+    }
+    
+    return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView
@@ -113,21 +110,15 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath
 commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
         [_todoList deleteFromIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    }
 }
 
 - (void)tableView:(UITableView *)tableView
 moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
     [_todoList moveStringFromIndex:fromIndexPath.row toIndex:toIndexPath.row];
-    
-    
 }
 
 
@@ -138,18 +129,10 @@ moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toInd
 - (void)tableView:(UITableView *)tableView
 willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *content;
-    if (_editingMode && indexPath.row > 0) {
-        content = [_todoList getStringForIndex:(indexPath.row - 1)];
-    } else if (!_editingMode) {
-        content = [_todoList getStringForIndex:indexPath.row];
-    }
-    
-    if (content) {
-        NSLog(@"UITableViewController will show cell with content / %@ /", content);
-        [(TodoListCell *)cell updateContentWithString:content];
-    } else {
-        [(TodoListCell *)cell becomeFirstResponder];
+    [(TodoCell *)cell updateContentWithString:[_todoList getStringForIndex:indexPath.row]];
+
+    if (_editingMode && indexPath.row == 0) {
+        [(TodoCell *)cell becomeFirstResponder];
     }
 }
 
@@ -162,30 +145,23 @@ canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 - (CGFloat)tableView:(UITableView *)tableView
-estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSLog(@"UITableViewController: checking estimated height");
-    return 50.0;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *content;
-    if (_editingMode && indexPath.row == 0) {
-        content = @"a todo list item";
-    } else if (_editingMode) {
-        // need to subtract 1 because the content for the first cell in editingMode is empty (that's the editing cell)
-        content = [_todoList getStringForIndex:(indexPath.row - 1)];
-    } else {
-        content = [_todoList getStringForIndex:indexPath.row];
+    if (indexPath.row == 0) {
+        NSLog(@"updating heights. all strings in order:");
+        for (int i =0; i < [_todoList count]; i++) {
+            NSLog(@"/ %@ /", [_todoList getStringForIndex:i]);
+        }
+        NSLog(@"Done");
     }
-    CGSize calculatedSize = [content sizeWithFont:[CellTextView defaultFont]
-                                        constrainedToSize:CGSizeMake(300.0f, 9999.0f)
-                                            lineBreakMode:[CellTextView defaultLineBreakMode]];
     
-    NSLog(@"UITableViewController: heightForRowAtIndexPath will be / %0.2f / for cell # /%d /", calculatedSize.height + 33, indexPath.row);
-    return calculatedSize.height + 33; // 33 just seems to be the magic height for centering the text in the UITableViewCell
+    UITextView *fakeTextView = [[UITextView alloc] init];
+    [fakeTextView setAttributedText:[[NSAttributedString alloc] initWithString:[_todoList getStringForIndex:indexPath.row]]];
+    CGRect textRect = [fakeTextView.text boundingRectWithSize:CGSizeMake(300, MAXFLOAT)
+                                                  options:NSStringDrawingUsesLineFragmentOrigin
+                                               attributes:@{NSFontAttributeName:[CellTextView defaultFont]}
+                                                  context:nil];
+    return textRect.size.height + 35;
 }
 
 - (void)tableView:(UITableView *)tableView
@@ -199,8 +175,7 @@ didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSLog(@"UITableViewController: cell / %d / did finish editing", indexPath.row);
-    TodoListCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    [cell resignFirstResponder];
+    [[self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath] resignFirstResponder];
     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
@@ -245,6 +220,16 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
     [super setEditing:editing animated:animated];
 }
 
+- (void)gotTodoCellDidChangeEvent:(id)sender
+{
+//    NSNotification *notification = (NSNotification *)sender;
+//    TodoCell *cell = notification.object;
+    
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+    
+}
+
 - (void)gotTextViewDidEndEditingEvent:(id)sender
 {
     NSLog(@"TodoViewController gotTextViewDidEndEditingEvent");
@@ -261,13 +246,15 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
     if (!_editingMode) {
         _editingMode = YES;
         
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
+        NSLog(@"adding empty string to TodoList");
+        [_todoList addString:@""];
         
         // add observer for textViewDidEndEditing event
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidEndEditingEvent:) name:@"textViewDidEndEditing" object:nil];
         [self.view addGestureRecognizer:_singleFingerTap];
         [self.navigationController.view addGestureRecognizer:_singleFingerTap];
+        
+//        [self.tableView reloadData];
+        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
     }
 }
 
@@ -277,28 +264,13 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
         _editingMode = NO;
         
         // remove observers and events
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
         [self.view removeGestureRecognizer:_singleFingerTap];
         [self.navigationController.view removeGestureRecognizer:_singleFingerTap];
         
-        // store the new description of the added todo item
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        TodoListCell *cell = (TodoListCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        
         // end the cell's editing and ownership over the keyboard
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        TodoCell *cell = (TodoCell *)[self.tableView cellForRowAtIndexPath:indexPath];
         [cell resignFirstResponder];
-        
-        NSString *newDescription = [cell getText];
-
-        // empty the content in the cell's textView so that when the cell is dequeued again, it's empty
-        [cell updateContentWithString:@""];
-        
-        // tell the UITableViewController to remove the editing cell
-        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        
-        // tell the UITableViewController to add the new cell
-        [_todoList addString:newDescription];
-        [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 

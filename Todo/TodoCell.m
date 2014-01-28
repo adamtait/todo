@@ -13,15 +13,24 @@
 
     // private properties
     @property (nonatomic, strong) CellTextView *cellTextView;
-    @property BOOL completed;
 
     // private methods
     - (void)setup;
+
+    - (void)gotTextViewDidChangeEvent:(id)sender;
 
 @end
 
 
 @implementation TodoCell
+
+#pragma public static methods
+
++ (CGRect)defaultFrame
+{
+    return CGRectMake(14, 8, 288, 30);
+}
+
 
 #pragma public initialization methods
 
@@ -38,8 +47,7 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self)
-    {
+    if (self) {
         [self setup];
     }
     return self;
@@ -50,22 +58,15 @@
 
 - (void)setup
 {
+    _todoListItem = nil;
+    
     // remove all subviews from the UITableViewCell contentView
     [[self.contentView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
-    self.cellTextView = [[CellTextView alloc] initWithFrame:CGRectMake(14, 8, 288, 30)];
+ 
+    self.cellTextView = [[CellTextView alloc] initWithFrame:[TodoCell defaultFrame]];
     [self.contentView addSubview:self.cellTextView.getTextView];
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-}
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    NSLog(@"TodoCell got setEditing / %hhd /", editing);
-    [super setEditing:editing animated:animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidChangeEvent:) name:@"textViewDidChange" object:nil];
 }
 
 
@@ -96,6 +97,15 @@
     NSLog(@"TodoCell is going to resignFirstResponder");
     [self.cellTextView resignFirstResponder];
     return [super resignFirstResponder];
+}
+
+
+#pragma event handlers
+
+- (void)gotTextViewDidChangeEvent:(id)sender
+{
+    [_todoListItem setWithString:[self getText]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"todoCellDidChange" object:self];
 }
 
 @end

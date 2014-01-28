@@ -7,16 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TodoListItem.h"
 
 @interface TodoCell : UITableViewCell
 
+    // public static methods
+    + (CGRect)defaultFrame;
+
     // public properties
-    @property (nonatomic, strong) NSIndexPath *indexPath;
+    @property (nonatomic, strong) TodoListItem *todoListItem;
 
     // public instance methods
     - (NSString *)getText;
     - (void)updateContentWithString:(NSString *)content;
 
+    // UIResponder methods
     - (BOOL)becomeFirstResponder;
     - (BOOL)resignFirstResponder;
 @end

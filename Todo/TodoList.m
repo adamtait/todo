@@ -23,14 +23,14 @@
     self = [super init];
     if (self) {
         _todoItems = [[NSMutableArray alloc] init];
-        [_todoItems addObject:@"kiss Tam"];
-        [_todoItems addObject:@"tell Tam how much you love her"];
-        [_todoItems addObject:@"always listen carefully to Tam"];
-        [_todoItems addObject:@"understand the emotional context of what Tam says"];
-        [_todoItems addObject:@"add constraints"];
-        [_todoItems addObject:@"save to parse"];
-        [_todoItems addObject:@"add an app icon"];
-        [_todoItems addObject:@"make text areas that are being edited update their heights"];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"kiss Tam"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"tell Tam how much you love her"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"listen to the context of Tam's words. The context is an important clue to understanding her better."]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"always make Tam your first priority"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"add constraints"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"save to parse"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"add an app icon"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"make text areas that are being edited update their heights"]];
     }
     return self;
 }
@@ -40,22 +40,31 @@
 
 - (NSString *)getStringForIndex:(NSInteger)index
 {
+    return [_todoItems[index] getString];
+}
+
+- (TodoListItem *)getTodoListItemForIndex:(NSInteger)index
+{
     return _todoItems[index];
 }
 
 - (void)addString:(NSString *)string
 {
-    [_todoItems insertObject:string atIndex:0];
+    [_todoItems insertObject:[[TodoListItem alloc] initWithString:string] atIndex:0];
+}
+
+- (void)addString:(NSString *)string atIndex:(NSInteger)atIndex
+{
+    [_todoItems insertObject:[[TodoListItem alloc] initWithString:string] atIndex:atIndex];
 }
 
 - (void)updateString:(NSString *)string atIndex:(NSInteger)atIndex
 {
-    [_todoItems replaceObjectAtIndex:atIndex withObject:string];
+    [_todoItems replaceObjectAtIndex:atIndex withObject:[[TodoListItem alloc] initWithString:string]];
 }
 
 - (void)moveStringFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex
 {
-    NSLog(@"moving item from / %d / to / %d /", fromIndex, toIndex);
     [_todoItems exchangeObjectAtIndex:toIndex withObjectAtIndex:fromIndex];
 }
 

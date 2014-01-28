@@ -12,6 +12,7 @@
 
     - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
+    - (void)gotTodoCellDidChangeEvent:(id)sender;
     - (void)gotTextViewDidEndEditingEvent:(id)sender;
 
 @end
