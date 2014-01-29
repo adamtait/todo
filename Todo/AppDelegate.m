@@ -8,11 +8,23 @@
 
 #import "AppDelegate.h"
 #import "TodoViewController.h"
+#import "TodoListItem.h"
+#import <Parse/Parse.h>
+
+@interface AppDelegate ()
+
+    - (void)setupParse;
+
+@end
+
+
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self setupParse];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
@@ -52,6 +64,26 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+
+#pragma parse
+
+- (void)setupParse
+{
+    [Parse setApplicationId:@"4jzzuLDuXQfAFTgV2nvto6JSO8c3GzuClXu6nwn1"
+                  clientKey:@"zV446qWCg8Mcx6oxzYkENpx7BCmDZu8Cv9Uphd1F"];
+    
+    [PFUser enableAutomaticUser];
+    
+    PFACL *defaultACL = [PFACL ACL];
+    
+    // If you would like all objects to be private by default, remove this line.
+    [defaultACL setPublicReadAccess:YES];
+    
+    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
+    
+    [TodoListItem registerSubclass];
 }
 
 @end

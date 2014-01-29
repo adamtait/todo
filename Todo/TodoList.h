@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TodoListItem.h"
+#import <Parse/Parse.h>
 
 @interface TodoList : NSObject
 
     - (id)init;
 
     - (NSString *)getStringForIndex:(NSInteger)index;
-    - (TodoListItem *)getTodoListItemForIndex:(NSInteger)index;
+    - (PFObject *)getPFObjectForIndex:(NSInteger)index;
     - (void)addString:(NSString *)string;
     - (void)addString:(NSString *)string atIndex:(NSInteger)atIndex;
     - (void)updateString:(NSString *)string atIndex:(NSInteger)atIndex;

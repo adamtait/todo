@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/Parse.h>
 
-@interface TodoListItem : NSObject
+@interface TodoListItem : PFObject <PFSubclassing>
 
     // public instance methods
-    - (id)initWithString:(NSString *)string;
-    - (NSString *)getString;
-    - (void)setWithString:(NSString *)string;
+    + (NSString *)parseClassName;
 
+    @property (retain) NSString *item;
+    @property (retain) NSString *index;
 @end

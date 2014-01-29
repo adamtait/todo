@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TodoListItem.h"
+#import <Parse/Parse.h>
 
 @interface TodoCell : UITableViewCell
 
@@ -15,7 +15,7 @@
     + (CGRect)defaultFrame;
 
     // public properties
-    @property (nonatomic, strong) TodoListItem *todoListItem;
+    @property (nonatomic, strong) PFObject *todoListItem;
 
     // public instance methods
     - (NSString *)getText;

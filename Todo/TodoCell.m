@@ -19,6 +19,7 @@
 
     - (void)gotTextViewDidBeginEditingEvent:(id)sender;
     - (void)gotTextViewDidChangeEvent:(id)sender;
+    - (void)gotTextViewDidEndEditingEvent:(id)sender;
 
 @end
 
@@ -72,8 +73,9 @@
     self.cellTextView = [[CellTextView alloc] initWithFrame:[TodoCell defaultFrame]];
     [self.contentView addSubview:self.cellTextView.getTextView];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidBeginEditingEvent:) name:@"textViewDidBeginEditing" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidChangeEvent:) name:@"textViewDidChange" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidBeginEditingEvent:) name:@"textViewDidBeginEditing" object:self.cellTextView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidChangeEvent:) name:@"textViewDidChange" object:self.cellTextView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidEndEditingEvent:) name:@"textViewDidEndEditing" object:self.cellTextView];
 }
 
 
@@ -116,8 +118,15 @@
 
 - (void)gotTextViewDidChangeEvent:(id)sender
 {
-    [_todoListItem setWithString:[self getText]];
+    [_todoListItem setObject:[self getText] forKey:@"item"];
+    [_todoListItem saveInBackground];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"todoCellDidChange" object:self];
+}
+
+- (void)gotTextViewDidEndEditingEvent:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"todoCellDidEndEditing" object:self];
 }
 
 @end

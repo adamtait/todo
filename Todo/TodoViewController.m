@@ -28,7 +28,7 @@ static NSString * const cellIdentifier = @"TodoCell";
 
     - (void)gotTodoCellDidChangeEvent:(id)sender;
     - (void)gotTodoCellDidBeginEditingEvent:(id)sender;
-    - (void)gotTextViewDidEndEditingEvent:(id)sender;
+    - (void)gotTodoCellDidEndEditingEvent:(id)sender;
 
     // editing
     - (void)startEditing;
@@ -73,7 +73,7 @@ static NSString * const cellIdentifier = @"TodoCell";
     // start listening for textViewDidChange events
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTodoCellDidBeginEditingEvent:) name:@"todoCellDidBeginEditing" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTodoCellDidChangeEvent:) name:@"todoCellDidChange" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidEndEditingEvent:) name:@"textViewDidEndEditing" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTodoCellDidEndEditingEvent:) name:@"todoCellDidEndEditing" object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -95,7 +95,7 @@ cellForRowAtIndexPath:(NSIndexPath *)indexPath
     TodoCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
     if (!cell.todoListItem) {
-        cell.todoListItem = [_todoList getTodoListItemForIndex:indexPath.row];
+        cell.todoListItem = [_todoList getPFObjectForIndex:indexPath.row];
     }
     
     return cell;
@@ -236,9 +236,14 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 
-- (void)gotTextViewDidEndEditingEvent:(id)sender
+- (void)gotTodoCellDidEndEditingEvent:(id)sender
 {
-    NSLog(@"TodoViewController gotTextViewDidEndEditingEvent");
+    NSNotification *notification = (NSNotification *)sender;
+    TodoCell *cell = notification.object;
+    NSString *index = [cell.todoListItem objectForKey:@"index"];
+    [_todoList updateString:[cell getText] atIndex:index.intValue];
+    
+    NSLog(@"TodoViewController gotTodoCellDidEndEditingEvent");
     if (_editingMode) {
         [self stopEditing];
     }
