@@ -96,7 +96,7 @@ static NSString * const parseIndexKey = @"index";
 - (void)deleteFromIndex:(NSInteger)index
 {
     PFObject *todo = _todoItems[index];
-    [todo deleteEventually];
+    [todo deleteInBackground];
     [self decrementAllItemIndexesFrom:(index + 1) to:[_todoItems count]];
     
     [_todoItems removeObjectAtIndex:index];
