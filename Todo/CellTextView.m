@@ -51,12 +51,19 @@
         [self.storage addLayoutManager:self.layout];
         
         self.textView = [[UITextView alloc] initWithFrame:frame textContainer:self.container];
+        
         self.textView.font = [CellTextView defaultFont];
+        self.textView.textContainerInset = UIEdgeInsetsZero;
+        
         self.textView.delegate = self;
         self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+        self.textView.translatesAutoresizingMaskIntoConstraints = YES;
+        
         self.textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.textView.returnKeyType = UIReturnKeyDone;
         self.textView.enablesReturnKeyAutomatically = YES;
+        
+        
     }
     return self;
 }
@@ -68,10 +75,10 @@
 
 - (void)updateContentWithString:(NSString *)content
 {
-    self.textView.text = content;
+    self.textView.attributedText = [[NSAttributedString alloc] initWithString:content ];
     
     NSRange range = NSMakeRange(0, [content length]);
-    [_storage addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:18.0] range:range];
+    [_storage addAttribute:NSFontAttributeName value:[CellTextView defaultFont] range:range];
 }
 
 
@@ -81,6 +88,8 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
     NSLog(@"CellTextView did begin editing");
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidBeginEditing" object:self];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView
@@ -106,6 +115,7 @@ shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+//    NSLog(@"CellTextView actual height of textContainer / %0.2f /", [_layout usedRectForTextContainer:_container].size.height);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidChange" object:self];
 }
 

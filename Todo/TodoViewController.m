@@ -26,6 +26,10 @@ static NSString * const cellIdentifier = @"TodoCell";
     @property (nonatomic, strong) UITapGestureRecognizer *singleFingerTap;
     - (void)gotTapGesture:(UITapGestureRecognizer *)recognizer;
 
+    - (void)gotTodoCellDidChangeEvent:(id)sender;
+    - (void)gotTodoCellDidBeginEditingEvent:(id)sender;
+    - (void)gotTextViewDidEndEditingEvent:(id)sender;
+
     // editing
     - (void)startEditing;
     - (void)stopEditing;
@@ -67,6 +71,7 @@ static NSString * const cellIdentifier = @"TodoCell";
     [self.navigationItem setLeftBarButtonItem:self.editButtonItem];
     
     // start listening for textViewDidChange events
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTodoCellDidBeginEditingEvent:) name:@"todoCellDidBeginEditing" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTodoCellDidChangeEvent:) name:@"todoCellDidChange" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidEndEditingEvent:) name:@"textViewDidEndEditing" object:nil];
 }
@@ -87,8 +92,6 @@ static NSString * const cellIdentifier = @"TodoCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView
 cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"UITableViewController: returning cell for index / %d /", indexPath.row);
-    
     TodoCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
     if (!cell.todoListItem) {
@@ -147,21 +150,14 @@ canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 - (CGFloat)tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0) {
-        NSLog(@"updating heights. all strings in order:");
-        for (int i =0; i < [_todoList count]; i++) {
-            NSLog(@"/ %@ /", [_todoList getStringForIndex:i]);
-        }
-        NSLog(@"Done");
-    }
-    
-    UITextView *fakeTextView = [[UITextView alloc] init];
-    [fakeTextView setAttributedText:[[NSAttributedString alloc] initWithString:[_todoList getStringForIndex:indexPath.row]]];
-    CGRect textRect = [fakeTextView.text boundingRectWithSize:CGSizeMake(300, MAXFLOAT)
-                                                  options:NSStringDrawingUsesLineFragmentOrigin
+    CellTextView *fakeTextView = [[CellTextView alloc] initWithFrame:[TodoCell defaultFrame]];
+    [fakeTextView updateContentWithString:[_todoList getStringForIndex:indexPath.row]];    // setAttributedText:[[NSAttributedString alloc] initWithString:[_todoList getStringForIndex:indexPath.row]]
+    CGRect textRect = [[fakeTextView getTextView].text boundingRectWithSize:CGSizeMake([TodoCell defaultFrame].size.width, MAXFLOAT)
+                                            options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin)
                                                attributes:@{NSFontAttributeName:[CellTextView defaultFont]}
                                                   context:nil];
-    return textRect.size.height + 35;
+//    NSLog(@"got height for / %@ / is / %0.2f /  final is / %0.2f /", [_todoList getStringForIndex:indexPath.row], textRect.size.height, (textRect.size.height + 25));
+    return textRect.size.height + 22;
 }
 
 - (void)tableView:(UITableView *)tableView
@@ -229,6 +225,16 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
     [self.tableView endUpdates];
     
 }
+
+- (void)gotTodoCellDidBeginEditingEvent:(id)sender
+{
+    NSNotification *notification = (NSNotification *)sender;
+    TodoCell *cell = notification.object;
+    [self.tableView scrollToRowAtIndexPath:[self.tableView indexPathForCell:cell]
+                          atScrollPosition:UITableViewScrollPositionTop
+                                  animated:YES];
+}
+
 
 - (void)gotTextViewDidEndEditingEvent:(id)sender
 {

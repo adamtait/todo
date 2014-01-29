@@ -17,6 +17,7 @@
     // private methods
     - (void)setup;
 
+    - (void)gotTextViewDidBeginEditingEvent:(id)sender;
     - (void)gotTextViewDidChangeEvent:(id)sender;
 
 @end
@@ -28,7 +29,7 @@
 
 + (CGRect)defaultFrame
 {
-    return CGRectMake(14, 8, 288, 30);
+    return CGRectMake(10, 10, 300, 44);
 }
 
 
@@ -60,12 +61,18 @@
 {
     _todoListItem = nil;
     
+    self.indentationLevel = 0;
+    self.indentationWidth = 0.0;
+    self.shouldIndentWhileEditing = NO;
+    self.separatorInset = UIEdgeInsetsZero;
+    
     // remove all subviews from the UITableViewCell contentView
     [[self.contentView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
- 
+    
     self.cellTextView = [[CellTextView alloc] initWithFrame:[TodoCell defaultFrame]];
     [self.contentView addSubview:self.cellTextView.getTextView];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidBeginEditingEvent:) name:@"textViewDidBeginEditing" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotTextViewDidChangeEvent:) name:@"textViewDidChange" object:nil];
 }
 
@@ -101,6 +108,11 @@
 
 
 #pragma event handlers
+
+- (void)gotTextViewDidBeginEditingEvent:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"todoCellDidBeginEditing" object:self];
+}
 
 - (void)gotTextViewDidChangeEvent:(id)sender
 {

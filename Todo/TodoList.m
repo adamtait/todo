@@ -31,6 +31,7 @@
         [_todoItems addObject:[[TodoListItem alloc] initWithString:@"save to parse"]];
         [_todoItems addObject:[[TodoListItem alloc] initWithString:@"add an app icon"]];
         [_todoItems addObject:[[TodoListItem alloc] initWithString:@"make text areas that are being edited update their heights"]];
+        [_todoItems addObject:[[TodoListItem alloc] initWithString:@"scroll currently editing cell to top"]];
     }
     return self;
 }

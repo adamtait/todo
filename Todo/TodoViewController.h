@@ -10,9 +10,7 @@
 
 @interface TodoViewController : UITableViewController <UITableViewDelegate>
 
+    // public instance methods
     - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
-
-    - (void)gotTodoCellDidChangeEvent:(id)sender;
-    - (void)gotTextViewDidEndEditingEvent:(id)sender;
 
 @end
