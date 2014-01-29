@@ -42,6 +42,7 @@
 - (id)initWithFrame:(CGRect)frame
 {
     self.container = [[NSTextContainer alloc] initWithSize:CGSizeMake(frame.size.width, frame.size.height)];
+    self.container.lineBreakMode = [CellTextView defaultLineBreakMode];
     self = [super init];
 
     if (self) {
@@ -58,6 +59,7 @@
         self.textView.delegate = self;
         self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         self.textView.translatesAutoresizingMaskIntoConstraints = YES;
+        
         
         self.textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.textView.returnKeyType = UIReturnKeyDone;
@@ -87,16 +89,12 @@
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
-    NSLog(@"CellTextView did begin editing");
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidBeginEditing" object:self];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
-    NSLog(@"CellTextView did end editing");
     [self.textView resignFirstResponder];
-
     [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidEndEditing" object:self];
 }
 
@@ -104,7 +102,6 @@
 shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if([text isEqualToString:@"\n"]) {
-        NSLog(@"CellTextView shouldChangeTextInRange has finished");
         [textView resignFirstResponder];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidEndEditing" object:self];
         return NO;
@@ -115,7 +112,6 @@ shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-//    NSLog(@"CellTextView actual height of textContainer / %0.2f /", [_layout usedRectForTextContainer:_container].size.height);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"textViewDidChange" object:self];
 }
 
@@ -124,13 +120,11 @@ shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 
 - (BOOL)becomeFirstResponder
 {
-    NSLog(@"CellTextView becameFirstResponder");
     return [self.textView becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    NSLog(@"CellTextView resignFirstResponder");
     return [self.textView resignFirstResponder];
 }
 

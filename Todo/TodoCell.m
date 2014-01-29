@@ -96,14 +96,12 @@
 
 - (BOOL)becomeFirstResponder
 {
-    NSLog(@"TodoCell is going to becomeFirstResponder");
     [self.cellTextView becomeFirstResponder];
     return [super becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    NSLog(@"TodoCell is going to resignFirstResponder");
     [self.cellTextView resignFirstResponder];
     return [super resignFirstResponder];
 }

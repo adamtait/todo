@@ -17,8 +17,8 @@ static NSString * const parseIndexKey = @"index";
 
     @property (nonatomic, strong) NSMutableArray *todoItems;
 
-    - (void)increaseAllItemIndexesFrom:(NSInteger)index;
-    - (void)decrementAllItemIndexesFrom:(NSInteger)index;
+    - (void)increaseAllItemIndexesFrom:(NSInteger)fromIndex to:(NSInteger)toIndex;
+    - (void)decrementAllItemIndexesFrom:(NSInteger)fromIndex to:(NSInteger)toIndex;
     - (NSArray *)loadAllTodoListItems;
 
 @end
@@ -31,10 +31,7 @@ static NSString * const parseIndexKey = @"index";
 {
     self = [super init];
     if (self) {
-        NSArray *items = [self loadAllTodoListItems];
-        NSLog(@"TodoList got / %@ /", items);
-        
-        _todoItems = [[NSMutableArray alloc] initWithArray:items];
+        _todoItems = [[NSMutableArray alloc] initWithArray:[self loadAllTodoListItems]];
     }
     return self;
 }
@@ -57,15 +54,7 @@ static NSString * const parseIndexKey = @"index";
 
 - (void)addString:(NSString *)string
 {
-    PFObject *todo = [PFObject objectWithClassName:parseClassName];
-    [todo setObject:string forKey:parseItemKey];
-    [todo setObject:@"0" forKey:parseIndexKey];
-    [self increaseAllItemIndexesFrom:0];
-    [todo saveInBackground];
-    
-    NSLog(@"addString no index Saving in background");
-    
-    [_todoItems insertObject:todo atIndex:0];
+    [self addString:string atIndex:0];
 }
 
 - (void)addString:(NSString *)string atIndex:(NSInteger)atIndex
@@ -73,10 +62,8 @@ static NSString * const parseIndexKey = @"index";
     PFObject *todo = [PFObject objectWithClassName:parseClassName];
     [todo setObject:string forKey:parseItemKey];
     [todo setObject:[NSString stringWithFormat:@"%d", atIndex] forKey:parseIndexKey];
-    [self increaseAllItemIndexesFrom:atIndex];
+    [self increaseAllItemIndexesFrom:atIndex to:[_todoItems count]];
     [todo saveInBackground];
-    
-    NSLog(@"addString index Saving in background");
     
     [_todoItems insertObject:todo atIndex:atIndex];
     
@@ -87,9 +74,7 @@ static NSString * const parseIndexKey = @"index";
     PFObject *todo = _todoItems[atIndex];
     [todo setObject:string forKey:parseItemKey];
     [todo saveInBackground];
-    
-    NSLog(@"updateString Saving in background");
-    
+
     [_todoItems replaceObjectAtIndex:atIndex withObject:todo];
 }
 
@@ -99,38 +84,41 @@ static NSString * const parseIndexKey = @"index";
     [fromTodo setObject:[NSString stringWithFormat:@"%d", toIndex] forKey:parseIndexKey];
     [fromTodo saveInBackground];
     
-    PFObject *toTodo = _todoItems[toIndex];
-    [toTodo setObject:[NSString stringWithFormat:@"%d", fromIndex] forKey:parseIndexKey];
-    [toTodo saveInBackground];
-    
-    NSLog(@"moveStringFromIndex Saving in background");
-    
-    [_todoItems exchangeObjectAtIndex:toIndex withObjectAtIndex:fromIndex];
+    if (fromIndex < toIndex) {
+        [self decrementAllItemIndexesFrom:(fromIndex + 1) to:(toIndex + 1)];
+    } else if (fromIndex > toIndex){
+        [self increaseAllItemIndexesFrom:toIndex to:fromIndex];
+    }
+    [_todoItems removeObjectAtIndex:fromIndex];
+    [_todoItems insertObject:fromTodo atIndex:toIndex];
 }
 
 - (void)deleteFromIndex:(NSInteger)index
 {
     PFObject *todo = _todoItems[index];
     [todo deleteEventually];
-    [self decrementAllItemIndexesFrom:index];
+    [self decrementAllItemIndexesFrom:(index + 1) to:[_todoItems count]];
     
     [_todoItems removeObjectAtIndex:index];
 }
 
-- (void)increaseAllItemIndexesFrom:(NSInteger)index
+
+#pragma increment or decrement many indexes
+
+- (void)increaseAllItemIndexesFrom:(NSInteger)fromIndex to:(NSInteger)toIndex
 {
-    for (int i = index + 1; i < [_todoItems count]; i++) {
+    for (int i = fromIndex; i < toIndex; i++) {
         PFObject *todo = _todoItems[i];
-        [todo setObject:[NSString stringWithFormat:@"%d", (i - 1)] forKey:parseIndexKey];
+        [todo setObject:[NSString stringWithFormat:@"%d", (i + 1)] forKey:parseIndexKey];
         [todo saveInBackground];
     }
 }
 
-- (void)decrementAllItemIndexesFrom:(NSInteger)index
+- (void)decrementAllItemIndexesFrom:(NSInteger)fromIndex to:(NSInteger)toIndex
 {
-    for (int i = index + 1; i < [_todoItems count]; i++) {
+    for (int i = fromIndex; i < toIndex; i++) {
         PFObject *todo = _todoItems[i];
-        [todo setObject:[NSString stringWithFormat:@"%d", (i + 1)] forKey:parseIndexKey];
+        [todo setObject:[NSString stringWithFormat:@"%d", (i - 1)] forKey:parseIndexKey];
         [todo saveInBackground];
     }
 }
@@ -145,18 +133,12 @@ static NSString * const parseIndexKey = @"index";
 
 - (NSArray *)loadAllTodoListItems
 {
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"kiss Tam"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"tell Tam how much you love her"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"listen to the context of Tam's words. The context is an important clue to understanding her better."]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"always make Tam your first priority"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"add constraints"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"save to parse"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"add an app icon"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"make text areas that are being edited update their heights"]];
-//    [_todoItems addObject:[[TodoListItem alloc] initWithString:@"scroll currently editing cell to top"]];
-    
-    return [[PFQuery queryWithClassName:parseClassName] findObjects];
-    
+    NSArray *pfobjects = [[PFQuery queryWithClassName:parseClassName] findObjects];
+    return [pfobjects sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSString *aString = [(PFObject *)a objectForKey:parseIndexKey];
+        NSString *bString = [(PFObject *)b objectForKey:parseIndexKey];
+        return aString.intValue > bString.intValue;
+    }];
 }
 
 @end

@@ -65,7 +65,7 @@ static NSString * const cellIdentifier = @"TodoCell";
     [[self tableView] registerClass:[TodoCell class] forCellReuseIdentifier:cellIdentifier];
     
     // setup navigation bar
-    self.navigationItem.title = @"Adam's Todo List";
+    self.navigationItem.title = @"to.do";
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(rightNavButtonTouched:)];
     [self.navigationItem setRightBarButtonItem:rightBarButton];
     [self.navigationItem setLeftBarButtonItem:self.editButtonItem];
@@ -152,25 +152,26 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CellTextView *fakeTextView = [[CellTextView alloc] initWithFrame:[TodoCell defaultFrame]];
     [fakeTextView updateContentWithString:[_todoList getStringForIndex:indexPath.row]];    // setAttributedText:[[NSAttributedString alloc] initWithString:[_todoList getStringForIndex:indexPath.row]]
+
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineBreakMode = [CellTextView defaultLineBreakMode];
     CGRect textRect = [[fakeTextView getTextView].text boundingRectWithSize:CGSizeMake([TodoCell defaultFrame].size.width, MAXFLOAT)
                                             options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin)
-                                               attributes:@{NSFontAttributeName:[CellTextView defaultFont]}
+                                               attributes:@{NSFontAttributeName:[CellTextView defaultFont],
+                                                            NSParagraphStyleAttributeName:paragraphStyle}
                                                   context:nil];
-//    NSLog(@"got height for / %@ / is / %0.2f /  final is / %0.2f /", [_todoList getStringForIndex:indexPath.row], textRect.size.height, (textRect.size.height + 25));
     return textRect.size.height + 22;
 }
 
 - (void)tableView:(UITableView *)tableView
 didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"UITableViewController: cell / %d / did get deselected", indexPath.row);
     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)tableView:(UITableView *)tableView
 didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"UITableViewController: cell / %d / did finish editing", indexPath.row);
     [[self.tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath] resignFirstResponder];
     [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
@@ -192,9 +193,6 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 #pragma UIResponder methods
 
 - (void)gotTapGesture:(UITapGestureRecognizer *)recognizer {
-    //CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-    
-    NSLog(@"got single tap");
     if (_editingMode) {
         [self stopEditing];
     }
@@ -212,15 +210,11 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    NSLog(@"TableViewController got a setEditing / %hhd / with animation / %hhd /", editing, animated);
     [super setEditing:editing animated:animated];
 }
 
 - (void)gotTodoCellDidChangeEvent:(id)sender
 {
-//    NSNotification *notification = (NSNotification *)sender;
-//    TodoCell *cell = notification.object;
-    
     [self.tableView beginUpdates];
     [self.tableView endUpdates];
     
@@ -243,7 +237,6 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
     NSString *index = [cell.todoListItem objectForKey:@"index"];
     [_todoList updateString:[cell getText] atIndex:index.intValue];
     
-    NSLog(@"TodoViewController gotTodoCellDidEndEditingEvent");
     if (_editingMode) {
         [self stopEditing];
     }
@@ -257,14 +250,11 @@ didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
     if (!_editingMode) {
         _editingMode = YES;
         
-        NSLog(@"adding empty string to TodoList");
         [_todoList addString:@""];
         
         // add observer for textViewDidEndEditing event
         [self.view addGestureRecognizer:_singleFingerTap];
         [self.navigationController.view addGestureRecognizer:_singleFingerTap];
-        
-//        [self.tableView reloadData];
         [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
     }
 }
